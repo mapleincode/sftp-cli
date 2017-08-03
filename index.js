@@ -39,7 +39,7 @@ class Client {
 }
 
 
-const methodList = ['list', 'get', 'put', 'mkdir', 'rmdir', 'rename'];
+const methodList = ['list', 'get', 'put', 'mkdir', 'rmdir', 'rename', 'end'];
 
 for(const method of methodList) {
     Client.prototype[method] = function() {
