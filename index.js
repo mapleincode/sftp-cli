@@ -20,20 +20,66 @@ class Client {
             options.username = username;
             options.password = password;
         }
-        this.sftp = new Ssh2SFtpClient();
+        // this.sftp = new Ssh2SFtpClient();
+
+        // 提取 timeout
+
+        if(options.timeout) {
+            try {
+                this.timeout = options.timeout;
+                delete options.timeout;
+            } catch(e) {}
+        }
+        this.timeout = this.timeout || 5000;
+
         this.options = options;
         this.emptyFunc = function() {};
+    }
+    _destroy(callback) {
+        this.sftp.end().then(function() {
+            callback();
+        }).catch(function(err) {
+            return callback(err);
+        });
+    }
+    _timeoutConnect(callback) {
+        const self = this;
+        const timeout = self.timeout || 5000;
+        setTimeout(function() {
+            callback();
+        }, timeout);
     }
 
     connect(callback) {
         const self = this;
+        let connectErrorStatus = false;
+        if(!self.sftp) {
+            self.sftp = new Ssh2SFtpClient();
+        }
+        self._timeoutConnect(function() {
+            if(!self.connected && !connectErrorStatus) {
+                connectErrorStatus = true;
+                self._destroy(function() {
+                    callback(new Error('connect sftp timeout!'));
+                });
 
+            }
+        });
         self.sftp.connect(self.options).then(function() {
-            self.connected = true;
-            return callback();
+            if(!connectErrorStatus) {
+                connectErrorStatus = true;
+                self.connected = true;
+                return callback();
+            }
         }).catch(function(err) {
-            return callback(err);
-        })
+            if(!connectErrorStatus) {
+                connectErrorStatus = true;
+                self._destroy(function() {
+                    return callback(err);
+                });
+
+            }
+        });
     }
 
 }
