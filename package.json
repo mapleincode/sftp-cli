@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "ssh2-sftp-client": "^1.1.0"
+    "ssh2-sftp-client": "^3.1.0"
   },
   "name": "sftp-cli",
-  "description": "## Install ```bash npm install sftp-cli --save ```",
-  "version": "1.2.0",
+  "description": "SFTP-Client use callback",
+  "version": "2.0.0",
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/mapleincode/sftp-cli/issues"
   },
-  "homepage": "https://github.com/mapleincode/sftp-cli#readme"
+  "homepage": "https://github.com/mapleincode/sftp-cli#readme",
+  "keywords": [
+    "sftp"
+  ]
 }

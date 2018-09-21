@@ -1,6 +1,9 @@
 # sftp-cli
 
+Callback 版本 sftp-cli，依赖 [ssh2-sftp-client](https://github.com/jyu213/ssh2-sftp-client)
+
 ## Install
+
 ```bash
 npm install sftp-cli --save
 ```

@@ -85,7 +85,20 @@ class Client {
 }
 
 
-const methodList = ['list', 'get', 'put', 'mkdir', 'rmdir', 'rename', 'end'];
+const methodList = [
+    'list',
+    'get',
+    'put',
+    'mkdir',
+    'rmdir',
+    'rename',
+    'end',
+    'fastGet',
+    'fastPut',
+    'delete',
+    'chmod',
+    'stat'
+];
 
 for(const method of methodList) {
     Client.prototype[method] = function() {
@@ -104,5 +117,9 @@ for(const method of methodList) {
         });
     }
 }
+
+Client.prototype.on = function(eventType, callback) {
+    this.sftp.on(eventType, callback);
+};
 
 module.exports = Client;
