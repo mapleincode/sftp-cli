@@ -3,12 +3,13 @@
  */
 "use strict";
 
+const events = require('events');
 const Ssh2SFtpClient = require('ssh2-sftp-client');
 
 
-class Client {
+class Client extends events.EventEmitter {
     constructor(host, username, password, options) {
-        const self = this;
+        super();
 
         if(typeof host === "object") {
             options = host;
@@ -20,7 +21,6 @@ class Client {
             options.username = username;
             options.password = password;
         }
-        // this.sftp = new Ssh2SFtpClient();
 
         // 提取 timeout
 
@@ -65,10 +65,27 @@ class Client {
 
             }
         });
+
         self.sftp.connect(self.options).then(function() {
             if(!connectErrorStatus) {
                 connectErrorStatus = true;
                 self.connected = true;
+
+                self.sftp.on('close', function() {
+                    self.emit('close', ...arguments);
+                });
+
+                self.sftp.on('end', function() {
+                    self.emit('end', ...arguments);
+                });
+
+
+                self.sftp.on('error', function() {
+                    const count = self.listenerCount('error');
+                    if(count > 0) {
+                        self.emit('error', ...arguments);
+                    }
+                })
                 return callback();
             }
         }).catch(function(err) {
@@ -117,9 +134,5 @@ for(const method of methodList) {
         });
     }
 }
-
-Client.prototype.on = function(eventType, callback) {
-    this.sftp.on(eventType, callback);
-};
 
 module.exports = Client;
